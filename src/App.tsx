@@ -89,7 +89,7 @@ export default function App() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <SemaphorePanel semaphores={step.semaphores} changed={step.changedSemaphores} />
+              <SemaphorePanel semaphores={step.semaphores} changed={step.changedSemaphores} queues={step.semaphoreQueues} />
               <VariablesPanel vars={step.vars} changed={step.changedVars} />
             </div>
 

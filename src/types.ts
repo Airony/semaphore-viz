@@ -32,6 +32,8 @@ export interface CodeHighlight {
   procedure: 'Changement' | 'Traverser';
   /** 1-based line numbers to highlight */
   lines: number[];
+  /** Process/vehicle ID for per-vehicle coloring (e.g. 'V1', 'V2A', 'P') */
+  processId?: string;
 }
 
 export interface Step {
@@ -46,6 +48,8 @@ export interface Step {
   changedVars: (keyof SharedVars)[];
   cars: CarState[];
   codeHighlights: CodeHighlight[];
+  /** Processes blocked/waiting on each semaphore (shown on hover) */
+  semaphoreQueues?: Partial<Record<SemaphoreKey, string[]>>;
 }
 
 export interface Scenario {
