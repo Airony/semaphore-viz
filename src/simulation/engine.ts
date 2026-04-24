@@ -21,6 +21,8 @@ export interface SimSnapshot {
   speed: number;
   log: LogEntry[];
   changementCountdown: number;  // seconds remaining until next auto-changement
+  passerDuration: number;       // ms a car spends inside the intersection
+  changementPeriod: number;     // seconds between auto-changements
 }
 
 // ─── Color palette for dynamically spawned cars ──────────────────────────────
@@ -51,6 +53,7 @@ export class SimulationEngine {
   private _running = false;
   private _paused = false;
   private _speed = 1;  // multiplier: higher = faster
+  private _passerDuration = 1500; // ms a car spends inside the intersection
   private _log: LogEntry[] = [];
   private _startTime = 0;
 
@@ -104,6 +107,8 @@ export class SimulationEngine {
       speed: this._speed,
       log: this._log.slice(),
       changementCountdown: this._changementCountdown,
+      passerDuration: this._passerDuration,
+      changementPeriod: this._changementPeriod,
     };
   }
 
@@ -192,6 +197,21 @@ export class SimulationEngine {
     this.emit();
   }
 
+  setPasserDuration(ms: number): void {
+    this._passerDuration = Math.max(200, Math.min(5000, ms));
+    this.emit();
+  }
+
+  setChangementPeriod(seconds: number): void {
+    this._changementPeriod = Math.max(1, Math.min(30, seconds));
+    this._changementCountdown = Math.min(this._changementCountdown, this._changementPeriod);
+    if (this._running && !this._paused) {
+      this.stopChangementTimer();
+      this.startChangementTimer();
+    }
+    this.emit();
+  }
+
   spawnCar(voie: 1 | 2): void {
     if (!this._running) this.start();
     const id = `V${this.nextCarId++}`;
@@ -269,7 +289,7 @@ export class SimulationEngine {
       this.setCarPosition(carId, 'passing');
       this.addLog(`${carId} : feux==${voie} → passer()`, carId);
       this.emit();
-      await this.delay(1500, epoch); // passer() duration
+      await this.delay(this._passerDuration, epoch);
       if (bail()) return;
       await gate();
       if (bail()) return;
@@ -309,7 +329,7 @@ export class SimulationEngine {
       this.setCarPosition(carId, 'passing');
       this.addLog(`${carId} : réveillé → enAttente=false, passer()`, carId);
       this.emit();
-      await this.delay(1500, epoch); // passer()
+      await this.delay(this._passerDuration, epoch);
       if (bail()) return;
       await gate();
       if (bail()) return;

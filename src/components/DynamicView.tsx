@@ -67,6 +67,8 @@ export default function DynamicView() {
   const handlePause = useCallback(() => engine.pause(), [engine]);
   const handleResume = useCallback(() => engine.resume(), [engine]);
   const handleSpeedChange = useCallback((s: number) => engine.setSpeed(s), [engine]);
+  const handlePasserDurationChange = useCallback((ms: number) => engine.setPasserDuration(ms), [engine]);
+  const handleChangementPeriodChange = useCallback((s: number) => engine.setChangementPeriod(s), [engine]);
 
   const handleReset = useCallback(() => {
     engine.reset();
@@ -149,11 +151,15 @@ export default function DynamicView() {
             paused={snap.paused}
             speed={snap.speed}
             changementCountdown={snap.changementCountdown}
+            changementPeriod={snap.changementPeriod}
+            passerDuration={snap.passerDuration}
             onSpawnCar={handleSpawnCar}
             onChangement={handleChangement}
             onPause={handlePause}
             onResume={handleResume}
             onSpeedChange={handleSpeedChange}
+            onChangementPeriodChange={handleChangementPeriodChange}
+            onPasserDurationChange={handlePasserDurationChange}
             onReset={handleReset}
           />
 
