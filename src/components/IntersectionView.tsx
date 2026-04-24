@@ -42,8 +42,16 @@ const CAR_COLORS: Record<string, string> = {
   V3:  '#10b981',   // emerald-500
 };
 
-function carColor(id: string) {
-  return CAR_COLORS[id] ?? '#94a3b8';
+// Dynamic color palettes for simulation mode
+const VOIE1_PALETTE = ['#3b82f6', '#6366f1', '#8b5cf6', '#0ea5e9', '#06b6d4'];
+const VOIE2_PALETTE = ['#f59e0b', '#ef4444', '#f97316', '#e11d48', '#ec4899'];
+
+function carColor(id: string, voie?: 1 | 2) {
+  if (CAR_COLORS[id]) return CAR_COLORS[id];
+  // Dynamic: pick from palette based on numeric ID and voie
+  const num = parseInt(id.replace(/\D/g, ''), 10) || 1;
+  const palette = voie === 2 ? VOIE2_PALETTE : VOIE1_PALETTE;
+  return palette[(num - 1) % palette.length];
 }
 
 function getPos(car: CarState) {
@@ -65,7 +73,7 @@ function CarSVG({ car, index }: CarSVGProps) {
   const offsetY = car.voie === 1 ? index * 14 : 0;
   const x = pos.x + offsetX;
   const y = pos.y + offsetY;
-  const color = carColor(car.id);
+  const color = carColor(car.id, car.voie);
 
   return (
     <g
