@@ -3,11 +3,56 @@ import type { SharedVars } from '../types';
 interface Props {
   vars: SharedVars;
   changed: (keyof SharedVars)[];
+  compact?: boolean;
 }
 
-export default function VariablesPanel({ vars, changed }: Props) {
+export default function VariablesPanel({ vars, changed, compact }: Props) {
   const feuxChanged = changed.includes('feux');
   const enAttenteChanged = changed.includes('enAttente');
+
+  if (compact) {
+    return (
+      <div className="bg-slate-800 rounded-xl p-2.5">
+        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+          Variables
+        </h3>
+        <div className="flex gap-2">
+          {/* feux — compact */}
+          <div
+            className={`
+              flex-1 rounded-lg p-1.5 border transition-all duration-300 flex items-center justify-between
+              ${feuxChanged ? 'border-yellow-400 bg-yellow-400/10' : 'border-slate-600 bg-slate-700/50'}
+            `}
+          >
+            <span className="text-[10px] font-mono text-slate-400">feux</span>
+            <div className="flex items-center gap-1">
+              <span className={`w-2 h-2 rounded-full ${vars.feux === 1 ? 'bg-blue-400' : 'bg-amber-400'}`} />
+              <span className="text-sm font-bold font-mono text-white">{vars.feux}</span>
+            </div>
+          </div>
+          {/* enAttente — compact */}
+          <div
+            className={`
+              flex-1 rounded-lg p-1.5 border transition-all duration-300 flex items-center justify-between
+              ${enAttenteChanged ? 'border-yellow-400 bg-yellow-400/10' : 'border-slate-600 bg-slate-700/50'}
+            `}
+          >
+            <span className="text-[10px] font-mono text-slate-400">enAttente</span>
+            <span
+              className={`
+                text-[10px] font-bold font-mono px-1.5 py-0.5 rounded
+                ${vars.enAttente
+                  ? 'bg-orange-900/60 text-orange-300 border border-orange-700'
+                  : 'bg-slate-700 text-slate-500 border border-slate-600'}
+              `}
+            >
+              {vars.enAttente ? 'true' : 'false'}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-slate-800 rounded-xl p-4 space-y-2">

@@ -29,17 +29,18 @@ interface Props {
   semaphores: SemaphoreValues;
   changed: SemaphoreKey[];
   queues?: Partial<Record<SemaphoreKey, string[]>>;
+  compact?: boolean;
 }
 
-export default function SemaphorePanel({ semaphores, changed, queues }: Props) {
+export default function SemaphorePanel({ semaphores, changed, queues, compact }: Props) {
   const keys = Object.keys(LABELS) as SemaphoreKey[];
 
   return (
-    <div className="bg-slate-800 rounded-xl p-4 space-y-2">
-      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
+    <div className={`bg-slate-800 rounded-xl ${compact ? 'p-2.5' : 'p-4 space-y-2'}`}>
+      <h3 className={`font-bold text-slate-400 uppercase tracking-wider ${compact ? 'text-[10px] mb-2' : 'text-xs mb-3'}`}>
         Sémaphores
       </h3>
-      <div className="grid grid-cols-2 gap-2">
+      <div className={`grid gap-1.5 ${compact ? 'grid-cols-4' : 'grid-cols-2 gap-2'}`}>
         {keys.map((key) => {
           const val = semaphores[key];
           const isChanged = changed.includes(key);
@@ -50,7 +51,8 @@ export default function SemaphorePanel({ semaphores, changed, queues }: Props) {
             <div
               key={key}
               className={`
-                group relative rounded-lg p-2.5 border transition-all duration-300 cursor-default
+                group relative rounded-lg border transition-all duration-300 cursor-default
+                ${compact ? 'p-1.5' : 'p-2.5'}
                 ${isChanged
                   ? 'border-yellow-400 bg-yellow-400/10 shadow-lg shadow-yellow-500/20'
                   : isBlocked
@@ -59,21 +61,24 @@ export default function SemaphorePanel({ semaphores, changed, queues }: Props) {
               `}
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono text-slate-300">{LABELS[key]}</span>
+                <span className={`font-mono text-slate-300 ${compact ? 'text-[9px] leading-none' : 'text-xs'}`}>{LABELS[key]}</span>
                 <span
                   className={`
-                    text-lg font-bold font-mono
+                    font-bold font-mono
+                    ${compact ? 'text-sm' : 'text-lg'}
                     ${isBlocked ? 'text-red-400' : 'text-emerald-400'}
                   `}
                 >
                   {val}
                 </span>
               </div>
-              <div className="mt-1 text-xs text-slate-500">
-                init: {INIT[key]}
-              </div>
+              {!compact && (
+                <div className="mt-1 text-xs text-slate-500">
+                  init: {INIT[key]}
+                </div>
+              )}
               {/* visual bar */}
-              <div className="mt-1.5 h-1.5 rounded-full bg-slate-700 overflow-hidden">
+              <div className={`rounded-full bg-slate-700 overflow-hidden ${compact ? 'mt-1 h-1' : 'mt-1.5 h-1.5'}`}>
                 <div
                   className={`h-full rounded-full transition-all duration-300 ${isBlocked ? 'bg-red-500' : 'bg-emerald-500'}`}
                   style={{ width: val > 0 ? '100%' : '0%' }}

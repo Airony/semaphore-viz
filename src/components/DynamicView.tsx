@@ -79,12 +79,40 @@ export default function DynamicView() {
   const activeCars = snap.cars.filter(c => c.position !== 'off');
 
   return (
-    <div className="flex-1 flex flex-col gap-4">
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-4">
-        {/* Left column: intersection + panels */}
-        <div className="flex flex-col gap-4">
-          <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
-            <div className="px-4 py-2 border-b border-slate-800 flex items-center justify-between">
+    <div className="flex-1 flex flex-col gap-3 min-h-0">
+      {/* ── Three-column main area ─────────────────────────────────────── */}
+      <div className="flex gap-3 min-h-0" style={{ height: 'calc(100vh - 260px)', minHeight: 480 }}>
+
+        {/* LEFT: event log */}
+        <div className="w-52 flex-shrink-0 bg-slate-900 rounded-xl border border-slate-800 flex flex-col overflow-hidden">
+          <div className="px-3 py-2 border-b border-slate-800 flex-shrink-0">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Journal</span>
+          </div>
+          <div className="flex-1 overflow-y-auto px-2 py-1.5 space-y-px font-mono">
+            {snap.log.length === 0 ? (
+              <p className="text-slate-600 text-center py-6 text-xs">Aucun événement</p>
+            ) : (
+              snap.log.map((entry, i) => (
+                <div key={i} className="flex gap-1.5 py-0.5 items-start">
+                  <span className="text-slate-600 text-[10px] w-10 flex-shrink-0 text-right leading-4 pt-px">
+                    {formatTime(entry.time)}
+                  </span>
+                  <span
+                    className="w-1 h-1 rounded-full flex-shrink-0 mt-1.5"
+                    style={{ backgroundColor: getLogColor(entry) }}
+                  />
+                  <span className="text-slate-300 text-[10px] leading-4 break-all">{entry.message}</span>
+                </div>
+              ))
+            )}
+            <div ref={logEndRef} />
+          </div>
+        </div>
+
+        {/* CENTER: intersection + active cars */}
+        <div className="flex-1 min-w-0 flex flex-col gap-3">
+          <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden flex-1 flex flex-col min-h-0">
+            <div className="px-4 py-2 border-b border-slate-800 flex items-center justify-between flex-shrink-0">
               <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
                 Simulation dynamique
               </span>
@@ -101,51 +129,38 @@ export default function DynamicView() {
                 </span>
               </div>
             </div>
-            <IntersectionView cars={activeCars} feux={snap.vars.feux} />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <SemaphorePanel
-              semaphores={snap.semaphores}
-              changed={[]}
-              queues={snap.semaphoreQueues}
-            />
-            <VariablesPanel vars={snap.vars} changed={[]} />
-          </div>
-
-          {/* Event log */}
-          <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
-            <div className="px-4 py-2 border-b border-slate-800">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                Journal d'exécution
-              </span>
-            </div>
-            <div className="h-48 overflow-y-auto px-3 py-2 space-y-0.5 font-mono text-xs">
-              {snap.log.length === 0 ? (
-                <p className="text-slate-600 text-center py-8">
-                  Ajoutez une voiture pour commencer la simulation
-                </p>
-              ) : (
-                snap.log.map((entry, i) => (
-                  <div key={i} className="flex gap-2 py-0.5">
-                    <span className="text-slate-600 w-14 flex-shrink-0 text-right">
-                      {formatTime(entry.time)}
-                    </span>
-                    <span
-                      className="w-1 flex-shrink-0 rounded-full"
-                      style={{ backgroundColor: getLogColor(entry) }}
-                    />
-                    <span className="text-slate-300">{entry.message}</span>
-                  </div>
-                ))
-              )}
-              <div ref={logEndRef} />
+            <div className="flex-1 min-h-0 flex items-center justify-center">
+              <IntersectionView cars={activeCars} feux={snap.vars.feux} />
             </div>
           </div>
+
+          {/* Active cars — compact horizontal list */}
+          {activeCars.filter(c => c.position !== 'done').length > 0 && (
+            <div className="bg-slate-900 rounded-xl border border-slate-800 px-3 py-2 flex flex-wrap gap-1.5 flex-shrink-0">
+              {activeCars
+                .filter(c => c.position !== 'done')
+                .map(car => {
+                  const color = engine.getCarColor(car.id);
+                  return (
+                    <div
+                      key={car.id}
+                      className="flex items-center gap-1.5 rounded-md px-2 py-1 border border-slate-700 bg-slate-800"
+                    >
+                      <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+                      <span className="font-mono text-xs font-bold text-white">{car.id}</span>
+                      <span className="text-[10px] text-slate-500">v{car.voie}</span>
+                      <span className="text-[10px] font-mono text-slate-400 bg-slate-700 rounded px-1">
+                        {car.position.replace('_', ' ')}
+                      </span>
+                    </div>
+                  );
+                })}
+            </div>
+          )}
         </div>
 
-        {/* Right column: controls */}
-        <div className="flex flex-col gap-4">
+        {/* RIGHT: controls */}
+        <div className="w-64 flex-shrink-0 overflow-y-auto">
           <SimulationControls
             running={snap.running}
             paused={snap.paused}
@@ -162,43 +177,18 @@ export default function DynamicView() {
             onPasserDurationChange={handlePasserDurationChange}
             onReset={handleReset}
           />
-
-          {/* Active cars list */}
-          <div className="bg-slate-800 rounded-xl p-4">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
-              Voitures actives
-            </h3>
-            {activeCars.filter(c => c.position !== 'done').length === 0 ? (
-              <p className="text-xs text-slate-600 text-center py-4">
-                Aucune voiture en cours
-              </p>
-            ) : (
-              <div className="space-y-1.5">
-                {activeCars
-                  .filter(c => c.position !== 'done')
-                  .map(car => {
-                    const color = engine.getCarColor(car.id);
-                    return (
-                      <div
-                        key={car.id}
-                        className="flex items-center gap-2 rounded-lg px-3 py-1.5 border border-slate-700 bg-slate-900/50"
-                      >
-                        <span
-                          className="w-3 h-3 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: color }}
-                        />
-                        <span className="font-mono text-sm font-bold text-white">{car.id}</span>
-                        <span className="text-xs text-slate-500">voie {car.voie}</span>
-                        <span className="ml-auto text-xs font-mono px-2 py-0.5 rounded bg-slate-700 text-slate-300">
-                          {car.position.replace('_', ' ')}
-                        </span>
-                      </div>
-                    );
-                  })}
-              </div>
-            )}
-          </div>
         </div>
+      </div>
+
+      {/* ── Bottom: semaphores + variables, compact ────────────────────── */}
+      <div className="grid grid-cols-2 gap-3 flex-shrink-0">
+        <SemaphorePanel
+          semaphores={snap.semaphores}
+          changed={[]}
+          queues={snap.semaphoreQueues}
+          compact
+        />
+        <VariablesPanel vars={snap.vars} changed={[]} compact />
       </div>
     </div>
   );
