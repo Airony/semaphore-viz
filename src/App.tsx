@@ -10,11 +10,23 @@ import ScenarioSelector from './components/ScenarioSelector';
 import DynamicView from './components/DynamicView';
 
 type AppMode = 'scenarios' | 'simulation';
+type Theme = 'dark' | 'light';
 
 export default function App() {
   const [mode, setMode] = useState<AppMode>('scenarios');
+  const [theme, setTheme] = useState<Theme>('dark');
   const [scenarioId, setScenarioId] = useState(scenarios[0].id);
   const [stepIndex, setStepIndex] = useState(0);
+
+  // Apply theme to <html>
+  useEffect(() => {
+    const html = document.documentElement;
+    if (theme === 'light') {
+      html.setAttribute('data-theme', 'light');
+    } else {
+      html.removeAttribute('data-theme');
+    }
+  }, [theme]);
 
   const scenario = scenarios.find(s => s.id === scenarioId)!;
   const step = scenario.steps[stepIndex];
@@ -48,36 +60,41 @@ export default function App() {
   }, [mode, handleNext, handlePrev, handleReset]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col">
-      <header className="bg-slate-900 border-b border-slate-800 px-6 py-4">
+    <div className="min-h-screen cs-page cs-text-primary flex flex-col">
+      <header className="cs-page border-b-2 cs-header px-6 py-3">
         <div className="max-w-screen-xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-bold text-white tracking-tight">
+            <h1 className="text-sm font-black cs-text-primary uppercase tracking-widest">
               Gestion d'un carrefour par sémaphores
             </h1>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-[10px] cs-text-muted mt-0.5 font-bold uppercase tracking-wider">
               Systèmes d'exploitation — Synchronisation · Visualisation interactive
             </p>
           </div>
 
-          {/* Mode toggle */}
-          <div className="flex items-center gap-1 bg-slate-800 rounded-lg p-1 border border-slate-700">
+          <div className="flex items-center gap-2">
+            {/* Theme toggle */}
+            <button
+              onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
+              className="cs-theme-btn"
+              title="Basculer le thème"
+            >
+              {theme === 'dark' ? '☀ Clair' : '☾ Sombre'}
+            </button>
+
+            {/* Mode toggle */}
             <button
               onClick={() => setMode('scenarios')}
-              className={`text-xs font-semibold rounded-md px-3 py-1.5 transition-colors ${
-                mode === 'scenarios'
-                  ? 'bg-slate-600 text-white shadow'
-                  : 'text-slate-400 hover:text-slate-200'
+              className={`cs-btn px-4 py-1.5 text-xs font-black ${
+                mode === 'scenarios' ? 'bg-blue-600 text-white' : 'cs-mode-inactive'
               }`}
             >
               Scénarios
             </button>
             <button
               onClick={() => setMode('simulation')}
-              className={`text-xs font-semibold rounded-md px-3 py-1.5 transition-colors ${
-                mode === 'simulation'
-                  ? 'bg-cyan-700 text-white shadow'
-                  : 'text-slate-400 hover:text-slate-200'
+              className={`cs-btn px-4 py-1.5 text-xs font-black ${
+                mode === 'simulation' ? 'bg-cyan-600 text-white' : 'cs-mode-inactive'
               }`}
             >
               Simulation
@@ -89,23 +106,24 @@ export default function App() {
       <main className="flex-1 max-w-screen-xl mx-auto w-full px-4 py-4 flex flex-col gap-4">
         {mode === 'scenarios' ? (
           <>
-            <div className="bg-slate-900 rounded-xl p-4 border border-slate-800">
+            <div className="cs-card p-3">
               <ScenarioSelector
                 scenarios={scenarios}
                 current={scenarioId}
                 onSelect={handleSelectScenario}
+                theme={theme}
               />
             </div>
 
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-4">
               <div className="flex flex-col gap-4">
-                <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden flex-shrink-0">
-                  <div className="px-4 py-2 border-b border-slate-800 flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                <div className="cs-card overflow-hidden flex-shrink-0">
+                  <div className="cs-header px-4 py-2 flex items-center justify-between">
+                    <span className="cs-label">
                       {scenario.title}: {scenario.subtitle}
                     </span>
-                    <span className="text-xs text-slate-600">
-                      feux = <span className={step.vars.feux === 1 ? 'text-blue-400 font-bold' : 'text-amber-400 font-bold'}>{step.vars.feux}</span>
+                    <span className="text-[10px] cs-text-muted font-bold">
+                      feux = <span className={step.vars.feux === 1 ? 'text-blue-500 font-black' : 'text-amber-500 font-black'}>{step.vars.feux}</span>
                     </span>
                   </div>
                   <IntersectionView cars={step.cars} feux={step.vars.feux} />
@@ -122,7 +140,7 @@ export default function App() {
                   stepIndex={stepIndex}
                 />
 
-                <div className="bg-slate-900 rounded-xl border border-slate-800 px-4 py-3">
+                <div className="cs-card px-4 py-3">
                   <StepControls
                     step={stepIndex}
                     total={scenario.steps.length}
@@ -133,7 +151,7 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="bg-slate-900 rounded-xl border border-slate-800 p-4 overflow-auto">
+              <div className="cs-card p-4 overflow-auto">
                 <CodeView highlights={step.codeHighlights} activeProcesses={step.activeProcesses} />
               </div>
             </div>
@@ -143,11 +161,12 @@ export default function App() {
         )}
       </main>
 
-      <footer className="border-t border-slate-800 px-6 py-3 text-center">
-        <p className="text-xs text-slate-600">
+      <footer className="border-t-2 cs-header px-6 py-2 text-center">
+        <p className="text-[10px] cs-text-faint font-black uppercase tracking-widest">
           Exercice — Synchronisation par sémaphores · Devoir maison SE
         </p>
       </footer>
     </div>
   );
 }
+

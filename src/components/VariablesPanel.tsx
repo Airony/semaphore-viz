@@ -12,40 +12,19 @@ export default function VariablesPanel({ vars, changed, compact }: Props) {
 
   if (compact) {
     return (
-      <div className="bg-slate-800 rounded-xl p-2.5">
-        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">
-          Variables
-        </h3>
+      <div className="cs-card p-2.5">
+        <p className="cs-label mb-2">Variables</p>
         <div className="flex gap-2">
-          {/* feux — compact */}
-          <div
-            className={`
-              flex-1 rounded-lg p-1.5 border transition-all duration-300 flex items-center justify-between
-              ${feuxChanged ? 'border-yellow-400 bg-yellow-400/10' : 'border-slate-600 bg-slate-700/50'}
-            `}
-          >
-            <span className="text-[10px] font-mono text-slate-400">feux</span>
-            <div className="flex items-center gap-1">
-              <span className={`w-2 h-2 rounded-full ${vars.feux === 1 ? 'bg-blue-400' : 'bg-amber-400'}`} />
-              <span className="text-sm font-bold font-mono text-white">{vars.feux}</span>
+          <div className={`cs-var-cell ${feuxChanged ? 'cs-var-changed' : 'cs-var-normal'} flex-1 flex items-center justify-between px-2 py-1.5`}>
+            <span className="text-[10px] font-mono font-black cs-text-muted">feux</span>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 border-2 border-black" style={{ background: vars.feux === 1 ? '#3b82f6' : '#f59e0b' }} />
+              <span className="text-base font-black font-mono cs-text-primary">{vars.feux}</span>
             </div>
           </div>
-          {/* enAttente — compact */}
-          <div
-            className={`
-              flex-1 rounded-lg p-1.5 border transition-all duration-300 flex items-center justify-between
-              ${enAttenteChanged ? 'border-yellow-400 bg-yellow-400/10' : 'border-slate-600 bg-slate-700/50'}
-            `}
-          >
-            <span className="text-[10px] font-mono text-slate-400">enAttente</span>
-            <span
-              className={`
-                text-[10px] font-bold font-mono px-1.5 py-0.5 rounded
-                ${vars.enAttente
-                  ? 'bg-orange-900/60 text-orange-300 border border-orange-700'
-                  : 'bg-slate-700 text-slate-500 border border-slate-600'}
-              `}
-            >
+          <div className={`cs-var-cell ${enAttenteChanged ? 'cs-var-changed' : 'cs-var-normal'} flex-1 flex items-center justify-between px-2 py-1.5`}>
+            <span className="text-[10px] font-mono font-black cs-text-muted">enAttente</span>
+            <span className={`text-[10px] font-black font-mono px-1.5 py-0.5 ${vars.enAttente ? 'cs-var-enattente-on' : 'cs-var-enattente-off'}`}>
               {vars.enAttente ? 'true' : 'false'}
             </span>
           </div>
@@ -55,62 +34,36 @@ export default function VariablesPanel({ vars, changed, compact }: Props) {
   }
 
   return (
-    <div className="bg-slate-800 rounded-xl p-4 space-y-2">
-      <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
-        Variables partagées
-      </h3>
+    <div className="cs-card p-3">
+      <p className="cs-label mb-3">Variables partagées</p>
 
       {/* feux */}
-      <div
-        className={`
-          rounded-lg p-3 border transition-all duration-300
-          ${feuxChanged ? 'border-yellow-400 bg-yellow-400/10' : 'border-slate-600 bg-slate-700/50'}
-        `}
-      >
+      <div className={`cs-var-cell ${feuxChanged ? 'cs-var-changed' : 'cs-var-normal'} mb-2 px-3 py-2.5`}>
         <div className="flex items-center justify-between">
-          <span className="text-xs font-mono text-slate-300">feux</span>
+          <span className="text-xs font-mono font-black cs-text-muted">feux</span>
           <div className="flex items-center gap-2">
-            <span
-              className={`
-                w-3 h-3 rounded-full inline-block
-                ${vars.feux === 1 ? 'bg-blue-400' : 'bg-amber-400'}
-              `}
-            />
-            <span className="text-lg font-bold font-mono text-white">{vars.feux}</span>
+            <span className="w-4 h-4 border-2 border-black shadow-[1px_1px_0_#000]" style={{ background: vars.feux === 1 ? '#3b82f6' : '#f59e0b' }} />
+            <span className="text-2xl font-black font-mono cs-text-primary">{vars.feux}</span>
           </div>
         </div>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className="text-[10px] font-bold mt-1 cs-text-faint">
           Voie {vars.feux} au&nbsp;
-          <span className="text-emerald-400 font-semibold">VERT</span>
-          {' '}/ Voie {vars.feux === 1 ? 2 : 1} au&nbsp;
-          <span className="text-red-400 font-semibold">ROUGE</span>
+          <span className="text-green-500 font-black">VERT</span>
+          {' '}&nbsp;/&nbsp;Voie {vars.feux === 1 ? 2 : 1} au&nbsp;
+          <span className="text-red-500 font-black">ROUGE</span>
         </p>
       </div>
 
       {/* enAttente */}
-      <div
-        className={`
-          rounded-lg p-3 border transition-all duration-300
-          ${enAttenteChanged ? 'border-yellow-400 bg-yellow-400/10' : 'border-slate-600 bg-slate-700/50'}
-        `}
-      >
+      <div className={`cs-var-cell ${enAttenteChanged ? 'cs-var-changed' : 'cs-var-normal'} px-3 py-2.5`}>
         <div className="flex items-center justify-between">
-          <span className="text-xs font-mono text-slate-300">enAttente</span>
-          <span
-            className={`
-              text-sm font-bold font-mono px-2 py-0.5 rounded
-              ${vars.enAttente
-                ? 'bg-orange-900/60 text-orange-300 border border-orange-700'
-                : 'bg-slate-700 text-slate-400 border border-slate-600'}
-            `}
-          >
+          <span className="text-xs font-mono font-black cs-text-muted">enAttente</span>
+          <span className={`text-sm font-black font-mono px-2 py-0.5 ${vars.enAttente ? 'cs-var-enattente-on' : 'cs-var-enattente-off'}`}>
             {vars.enAttente ? 'true' : 'false'}
           </span>
         </div>
-        <p className="text-xs text-slate-500 mt-1">
-          {vars.enAttente
-            ? 'Une voiture attend le changement de feu'
-            : 'Aucune voiture en attente'}
+        <p className="text-[10px] font-bold mt-1 cs-text-faint">
+          {vars.enAttente ? 'Une voiture attend le changement' : 'Aucune voiture en attente'}
         </p>
       </div>
     </div>

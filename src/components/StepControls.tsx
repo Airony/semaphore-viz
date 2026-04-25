@@ -15,7 +15,7 @@ export default function StepControls({ step, total, onPrev, onNext, onReset }: P
       <button
         onClick={onReset}
         disabled={isFirst}
-        className="px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 disabled:opacity-30 disabled:cursor-not-allowed text-slate-300 text-sm font-medium transition-colors border border-slate-600 hover:border-slate-500"
+        className="cs-btn cs-ctrl-btn px-3 py-2 text-xs font-black"
         title="Réinitialiser (R)"
       >
         ↺ Reset
@@ -24,23 +24,23 @@ export default function StepControls({ step, total, onPrev, onNext, onReset }: P
       <button
         onClick={onPrev}
         disabled={isFirst}
-        className="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 disabled:opacity-30 disabled:cursor-not-allowed text-slate-200 text-sm font-bold transition-colors border border-slate-600 hover:border-slate-500"
+        className="cs-btn cs-ctrl-btn px-4 py-2 text-xs font-black"
         title="Précédent (←)"
       >
         ← Précédent
       </button>
 
-      <div className="flex items-center gap-1.5 min-w-[100px] justify-center">
+      <div className="flex items-center gap-1 min-w-[80px] justify-center">
         {Array.from({ length: total }, (_, i) => (
           <div
             key={i}
             className={`
-              rounded-full transition-all duration-200
+              transition-all duration-200 border border-black rounded-none
               ${i === step
-                ? 'w-3 h-3 bg-cyan-400'
+                ? 'w-3 h-3 bg-cyan-400 shadow-[1px_1px_0_#000]'
                 : i < step
-                  ? 'w-2 h-2 bg-slate-500'
-                  : 'w-2 h-2 bg-slate-700'}
+                  ? 'w-2 h-2 cs-dot-done'
+                  : 'w-2 h-2 cs-dot-future'}
             `}
           />
         ))}
@@ -49,13 +49,13 @@ export default function StepControls({ step, total, onPrev, onNext, onReset }: P
       <button
         onClick={onNext}
         disabled={isLast}
-        className="px-4 py-2 rounded-lg bg-cyan-700 hover:bg-cyan-600 disabled:opacity-30 disabled:cursor-not-allowed text-white text-sm font-bold transition-colors border border-cyan-600 hover:border-cyan-500"
+        className="cs-btn bg-cyan-600 text-white px-4 py-2 text-xs font-black"
         title="Suivant (→)"
       >
         Suivant →
       </button>
 
-      <span className="text-xs text-slate-500 font-mono">
+      <span className="text-xs cs-text-faint font-mono font-black">
         {step + 1} / {total}
       </span>
     </div>

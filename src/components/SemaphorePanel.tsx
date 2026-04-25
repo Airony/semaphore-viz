@@ -36,60 +36,64 @@ export default function SemaphorePanel({ semaphores, changed, queues, compact }:
   const keys = Object.keys(LABELS) as SemaphoreKey[];
 
   return (
-    <div className={`bg-slate-800 rounded-xl ${compact ? 'p-2.5' : 'p-4 space-y-2'}`}>
-      <h3 className={`font-bold text-slate-400 uppercase tracking-wider ${compact ? 'text-[10px] mb-2' : 'text-xs mb-3'}`}>
-        Sémaphores
-      </h3>
-      <div className={`grid gap-1.5 ${compact ? 'grid-cols-4' : 'grid-cols-2 gap-2'}`}>
+    <div className={`cs-card ${compact ? 'p-2.5' : 'p-3'}`}>
+      <p className={`cs-label ${compact ? 'mb-2' : 'mb-3'}`}>Sémaphores</p>
+      <div className={`grid gap-2 ${compact ? 'grid-cols-4' : 'grid-cols-2'}`}>
         {keys.map((key) => {
           const val = semaphores[key];
           const isChanged = changed.includes(key);
           const isBlocked = val === 0;
           const queue = queues?.[key] ?? [];
 
+          const numColor = isChanged ? '#fcd34d' : isBlocked ? '#f87171' : '#4ade80';
+          const barColor = isChanged ? '#f59e0b' : isBlocked ? '#ef4444' : '#22c55e';
+          const cellClass = isChanged ? 'cs-sem-changed' : isBlocked ? 'cs-sem-blocked' : 'cs-sem-ok';
+
           return (
             <div
               key={key}
-              className={`
-                group relative rounded-lg border transition-all duration-300 cursor-default
-                ${compact ? 'p-1.5' : 'p-2.5'}
-                ${isChanged
-                  ? 'border-yellow-400 bg-yellow-400/10 shadow-lg shadow-yellow-500/20'
-                  : isBlocked
-                    ? 'border-red-800 bg-red-950/60'
-                    : 'border-emerald-700 bg-emerald-950/60'}
-              `}
+              className={`group relative cursor-default ${cellClass}`}
+              style={{ padding: compact ? '5px 8px' : '9px 10px' }}
             >
               <div className="flex items-center justify-between">
-                <span className={`font-mono text-slate-300 ${compact ? 'text-[9px] leading-none' : 'text-xs'}`}>{LABELS[key]}</span>
                 <span
-                  className={`
-                    font-bold font-mono
-                    ${compact ? 'text-sm' : 'text-lg'}
-                    ${isBlocked ? 'text-red-400' : 'text-emerald-400'}
-                  `}
+                  className="font-mono font-black cs-sem-init"
+                  style={{ fontSize: compact ? 9 : 10 }}
+                >
+                  {LABELS[key]}
+                </span>
+                <span
+                  className="font-black font-mono"
+                  style={{ fontSize: compact ? 14 : 20, color: numColor, lineHeight: 1 }}
                 >
                   {val}
                 </span>
               </div>
               {!compact && (
-                <div className="mt-1 text-xs text-slate-500">
+                <div className="cs-sem-init" style={{ fontSize: 9, fontWeight: 900, marginTop: 2 }}>
                   init: {INIT[key]}
                 </div>
               )}
-              {/* visual bar */}
-              <div className={`rounded-full bg-slate-700 overflow-hidden ${compact ? 'mt-1 h-1' : 'mt-1.5 h-1.5'}`}>
+              {/* Flat progress bar */}
+              <div
+                className="cs-sem-bar"
+                style={{ marginTop: compact ? 4 : 5, height: compact ? 3 : 4 }}
+              >
                 <div
-                  className={`h-full rounded-full transition-all duration-300 ${isBlocked ? 'bg-red-500' : 'bg-emerald-500'}`}
-                  style={{ width: val > 0 ? '100%' : '0%' }}
+                  style={{
+                    height: '100%',
+                    width: val > 0 ? '100%' : '0%',
+                    background: barColor,
+                    transition: 'width 0.3s',
+                  }}
                 />
               </div>
 
-              {/* hover tooltip — queue info */}
-              <div className="absolute z-10 left-0 right-0 top-full mt-1 rounded-lg border p-2
-                              opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200
-                              bg-slate-700 border-slate-600 text-xs shadow-lg">
-                <div className="font-semibold text-slate-300 mb-1">File d'attente :</div>
+              {/* Hover tooltip */}
+              <div
+                className="absolute z-10 left-0 right-0 top-full mt-1 p-2 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-150 cs-card"
+              >
+                <div className="cs-label mb-1">File d&apos;attente</div>
                 {queue.length > 0 ? (
                   <div className="flex flex-wrap gap-1">
                     {queue.map(pid => {
@@ -97,8 +101,8 @@ export default function SemaphorePanel({ semaphores, changed, queues, compact }:
                       return (
                         <span
                           key={pid}
-                          className="inline-block px-1.5 py-0.5 rounded font-mono font-medium"
-                          style={{ backgroundColor: `${color}30`, color }}
+                          className="inline-block px-1.5 py-0.5 text-[10px] font-mono font-black border-2 border-black shadow-[1px_1px_0_#000]"
+                          style={{ background: color, color: '#000' }}
                         >
                           {pid}
                         </span>
@@ -106,7 +110,7 @@ export default function SemaphorePanel({ semaphores, changed, queues, compact }:
                     })}
                   </div>
                 ) : (
-                  <span className="text-slate-400">Aucun processus en attente</span>
+                  <span className="cs-text-faint" style={{ fontSize: 10, fontWeight: 700 }}>Aucun</span>
                 )}
               </div>
             </div>

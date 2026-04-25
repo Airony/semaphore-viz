@@ -39,6 +39,7 @@ export default function DynamicView() {
 
   const [snap, setSnap] = useState<SimSnapshot>(engine.snapshot);
   const logEndRef = useRef<HTMLDivElement>(null);
+  const logContainerRef = useRef<HTMLDivElement>(null);
 
   // Subscribe to engine state changes
   const updateSnap = useCallback(() => {
@@ -50,10 +51,15 @@ export default function DynamicView() {
     return () => engine.onStateChange(() => {});
   }, [engine, updateSnap]);
 
-  // Auto-scroll log
-//   useEffect(() => {
-//     logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-//   }, [snap.log.length]);
+  // Auto-scroll log only when already at the bottom
+  useEffect(() => {
+    const el = logContainerRef.current;
+    if (!el) return;
+    const isAtBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
+    if (isAtBottom) {
+      logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [snap.log.length]);
 
   // Handlers
   const handleSpawnCar = useCallback((voie: 1 | 2) => {
@@ -84,24 +90,24 @@ export default function DynamicView() {
       <div className="flex gap-3 min-h-0" style={{ height: 'calc(100vh - 260px)', minHeight: 480 }}>
 
         {/* LEFT: event log */}
-        <div className="w-52 flex-shrink-0 bg-slate-900 rounded-xl border border-slate-800 flex flex-col overflow-hidden">
-          <div className="px-3 py-2 border-b border-slate-800 flex-shrink-0">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Journal</span>
+        <div className="w-52 flex-shrink-0 cs-card flex flex-col overflow-hidden">
+          <div className="px-3 py-2 border-b-2 cs-header flex-shrink-0">
+            <span className="cs-label">Journal</span>
           </div>
-          <div className="flex-1 overflow-y-auto px-2 py-1.5 space-y-px font-mono">
+          <div ref={logContainerRef} className="flex-1 overflow-y-auto px-2 py-1.5 space-y-px font-mono cs-log-bg">
             {snap.log.length === 0 ? (
-              <p className="text-slate-600 text-center py-6 text-xs">Aucun événement</p>
+              <p className="text-center py-6 text-[10px] font-black cs-text-faint">Aucun événement</p>
             ) : (
               snap.log.map((entry, i) => (
                 <div key={i} className="flex gap-1.5 py-0.5 items-start">
-                  <span className="text-slate-600 text-[10px] w-10 flex-shrink-0 text-right leading-4 pt-px">
+                  <span className="cs-log-time text-[10px] w-10 flex-shrink-0 text-right leading-4 pt-px font-mono font-black">
                     {formatTime(entry.time)}
                   </span>
                   <span
-                    className="w-1 h-1 rounded-full flex-shrink-0 mt-1.5"
-                    style={{ backgroundColor: getLogColor(entry) }}
+                    className="w-1.5 h-1.5 flex-shrink-0 mt-[5px] border border-black"
+                    style={{ background: getLogColor(entry) }}
                   />
-                  <span className="text-slate-300 text-[10px] leading-4 break-all">{entry.message}</span>
+                  <span className="cs-log-msg text-[10px] leading-4 break-all font-mono">{entry.message}</span>
                 </div>
               ))
             )}
@@ -111,19 +117,19 @@ export default function DynamicView() {
 
         {/* CENTER: intersection + active cars */}
         <div className="flex-1 min-w-0 flex flex-col gap-3">
-          <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden flex-1 flex flex-col min-h-0">
-            <div className="px-4 py-2 border-b border-slate-800 flex items-center justify-between flex-shrink-0">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+          <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden flex-1 flex flex-col min-h-0 cs-card">
+            <div className="px-4 py-2 border-b-2 cs-header flex items-center justify-between flex-shrink-0">
+              <span className="cs-label">
                 Simulation dynamique
               </span>
               <div className="flex items-center gap-3">
                 {snap.running && (
-                  <span className={`text-xs font-semibold ${snap.paused ? 'text-amber-400' : 'text-emerald-400'}`}>
+                  <span className={`text-[10px] font-black ${snap.paused ? 'text-amber-500' : 'text-emerald-600'}`}>
                     {snap.paused ? '⏸ En pause' : '● En cours'}
                   </span>
                 )}
-                <span className="text-xs text-slate-600">
-                  feux = <span className={snap.vars.feux === 1 ? 'text-blue-400 font-bold' : 'text-amber-400 font-bold'}>
+                <span className="text-[10px] font-black cs-text-muted">
+                  feux = <span className={snap.vars.feux === 1 ? 'text-blue-400 font-black' : 'text-amber-400 font-black'}>
                     {snap.vars.feux}
                   </span>
                 </span>
@@ -136,7 +142,7 @@ export default function DynamicView() {
 
           {/* Active cars — compact horizontal list */}
           {activeCars.filter(c => c.position !== 'done').length > 0 && (
-            <div className="bg-slate-900 rounded-xl border border-slate-800 px-3 py-2 flex flex-wrap gap-1.5 flex-shrink-0">
+            <div className="cs-card px-3 py-2 flex flex-wrap gap-1.5 flex-shrink-0">
               {activeCars
                 .filter(c => c.position !== 'done')
                 .map(car => {
@@ -144,12 +150,12 @@ export default function DynamicView() {
                   return (
                     <div
                       key={car.id}
-                      className="flex items-center gap-1.5 rounded-md px-2 py-1 border border-slate-700 bg-slate-800"
+                      className="cs-chip flex items-center gap-1.5 px-2 py-1"
                     >
-                      <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
-                      <span className="font-mono text-xs font-bold text-white">{car.id}</span>
-                      <span className="text-[10px] text-slate-500">v{car.voie}</span>
-                      <span className="text-[10px] font-mono text-slate-400 bg-slate-700 rounded px-1">
+                      <span className="w-2 h-2 flex-shrink-0 border border-black" style={{ background: color }} />
+                      <span className="font-mono text-xs font-black cs-text-primary">{car.id}</span>
+                      <span className="text-[10px] font-bold cs-chip-lbl">v{car.voie}</span>
+                      <span className="cs-chip-pos text-[10px] font-mono font-black px-1">
                         {car.position.replace('_', ' ')}
                       </span>
                     </div>

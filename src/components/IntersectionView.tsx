@@ -80,26 +80,38 @@ function CarSVG({ car, index }: CarSVGProps) {
       transform={`translate(${x},${y}) rotate(${pos.angle})`}
       style={{ transition: 'transform 0.5s ease' }}
     >
-      {/* car body */}
+      {/* Offset shadow (cel-shaded) */}
+      <rect
+        x={-CAR_W / 2 + 3}
+        y={-CAR_H / 2 + 3}
+        width={CAR_W}
+        height={CAR_H}
+        rx={2}
+        fill="rgba(0,0,0,0.85)"
+      />
+      {/* Car body */}
       <rect
         x={-CAR_W / 2}
         y={-CAR_H / 2}
         width={CAR_W}
         height={CAR_H}
-        rx={5}
+        rx={2}
         fill={color}
-        stroke="white"
-        strokeWidth={1.5}
+        stroke="#000"
+        strokeWidth={2}
       />
-      {/* label */}
+      {/* Label */}
       <text
         x={0}
         y={1}
         textAnchor="middle"
         dominantBaseline="middle"
         fontSize={10}
-        fontWeight="bold"
+        fontWeight="900"
         fill="white"
+        stroke="black"
+        strokeWidth={0.5}
+        paintOrder="stroke"
       >
         {car.id}
       </text>
@@ -117,10 +129,15 @@ interface TrafficLightProps {
 function TrafficLight({ x, y, green, label }: TrafficLightProps) {
   return (
     <g>
-      <rect x={x - 12} y={y - 28} width={24} height={48} rx={4} fill="#1e293b" />
-      <circle cx={x} cy={y - 12} r={8} fill={green ? '#4ade80' : '#334155'} />
-      <circle cx={x} cy={y + 12} r={8} fill={green ? '#334155' : '#ef4444'} />
-      <text x={x} y={y + 34} textAnchor="middle" fontSize={9} fill="#94a3b8">{label}</text>
+      {/* Housing shadow */}
+      <rect x={x - 10 + 2} y={y - 26 + 2} width={20} height={44} rx={0} fill="rgba(0,0,0,0.6)" />
+      {/* Housing */}
+      <rect x={x - 10} y={y - 26} width={20} height={44} rx={0} className="cs-svg-intersection" stroke="#000" strokeWidth={2} />
+      {/* Red light */}
+      <circle cx={x} cy={y - 10} r={6} fill={green ? 'var(--tl-red-off)' : '#ff2244'} stroke="#000" strokeWidth={2} />
+      {/* Green light */}
+      <circle cx={x} cy={y + 10} r={6} fill={green ? '#00cc55' : 'var(--tl-grn-off)'} stroke="#000" strokeWidth={2} />
+      <text x={x} y={y + 30} textAnchor="middle" fontSize={8} fill="var(--road-label-fill)" fontWeight="900">{label}</text>
     </g>
   );
 }
@@ -146,45 +163,51 @@ export default function IntersectionView({ cars, feux }: Props) {
       className="w-full h-full"
       style={{ maxHeight: 520 }}
     >
-      {/* Road background */}
-      <rect width={W} height={H} fill="#0f172a" />
+      {/* Base */}
+      <rect width={W} height={H} fill="var(--bg-page)" />
 
-      {/* Grass / ground */}
-      <rect x={0} y={0} width={W} height={H} fill="#14532d" opacity={0.3} rx={0} />
+      {/* Grass zones */}
+      <rect x={0} y={0} width={CX - HALF} height={CY - HALF} className="cs-svg-grass" />
+      <rect x={CX + HALF} y={0} width={CX - HALF} height={CY - HALF} className="cs-svg-grass" />
+      <rect x={0} y={CY + HALF} width={CX - HALF} height={CY - HALF} className="cs-svg-grass" />
+      <rect x={CX + HALF} y={CY + HALF} width={CX - HALF} height={CY - HALF} className="cs-svg-grass" />
 
-      {/* Horizontal road (voie 1) */}
-      <rect x={0} y={CY - HALF} width={W} height={ROAD_W} fill="#374151" />
-      {/* Vertical road (voie 2) */}
-      <rect x={CX - HALF} y={0} width={ROAD_W} height={H} fill="#374151" />
+      {/* Roads */}
+      <rect x={0} y={CY - HALF} width={W} height={ROAD_W} className="cs-svg-road" />
+      <rect x={CX - HALF} y={0} width={ROAD_W} height={H} className="cs-svg-road" />
+
+      {/* Road borders */}
+      <line x1={0} y1={CY - HALF} x2={CX - HALF} y2={CY - HALF} stroke="var(--road-border)" strokeWidth={2} />
+      <line x1={0} y1={CY + HALF} x2={CX - HALF} y2={CY + HALF} stroke="var(--road-border)" strokeWidth={2} />
+      <line x1={CX + HALF} y1={CY - HALF} x2={W} y2={CY - HALF} stroke="var(--road-border)" strokeWidth={2} />
+      <line x1={CX + HALF} y1={CY + HALF} x2={W} y2={CY + HALF} stroke="var(--road-border)" strokeWidth={2} />
+      <line x1={CX - HALF} y1={0} x2={CX - HALF} y2={CY - HALF} stroke="var(--road-border)" strokeWidth={2} />
+      <line x1={CX + HALF} y1={0} x2={CX + HALF} y2={CY - HALF} stroke="var(--road-border)" strokeWidth={2} />
+      <line x1={CX - HALF} y1={CY + HALF} x2={CX - HALF} y2={H} stroke="var(--road-border)" strokeWidth={2} />
+      <line x1={CX + HALF} y1={CY + HALF} x2={CX + HALF} y2={H} stroke="var(--road-border)" strokeWidth={2} />
 
       {/* Intersection box */}
-      <rect
-        x={CX - HALF}
-        y={CY - HALF}
-        width={ROAD_W}
-        height={ROAD_W}
-        fill="#4b5563"
-      />
+      <rect x={CX - HALF} y={CY - HALF} width={ROAD_W} height={ROAD_W} className="cs-svg-intersection" />
+      <rect x={CX - HALF} y={CY - HALF} width={ROAD_W} height={ROAD_W} fill="none" stroke="var(--road-border)" strokeWidth={2} />
 
-      {/* Road markings – voie 1 centre dashes */}
-      {[40, 140, 420, 520].map((x) => (
-        <rect key={x} x={x} y={CY - 2} width={50} height={4} rx={2} fill="#fbbf24" opacity={0.5} />
+      {/* Centre dashes — voie 1 */}
+      {[50, 160, 420, 530].map((x) => (
+        <rect key={x} x={x} y={CY - 3} width={55} height={5} className="cs-svg-dash" />
       ))}
-      {/* Road markings – voie 2 centre dashes */}
-      {[40, 140, 420, 520].map((y) => (
-        <rect key={y} x={CX - 2} y={y} width={4} height={50} rx={2} fill="#fbbf24" opacity={0.5} />
+      {/* Centre dashes — voie 2 */}
+      {[50, 160, 420, 530].map((y) => (
+        <rect key={y} x={CX - 3} y={y} width={5} height={55} className="cs-svg-dash" />
       ))}
 
       {/* Stop lines */}
-      <line x1={CX - HALF - 4} y1={CY - HALF} x2={CX - HALF - 4} y2={CY + HALF} stroke="white" strokeWidth={3} />
-      <line x1={CX + HALF + 4} y1={CY - HALF} x2={CX + HALF + 4} y2={CY + HALF} stroke="white" strokeWidth={3} />
-      <line x1={CX - HALF} y1={CY - HALF - 4} x2={CX + HALF} y2={CY - HALF - 4} stroke="white" strokeWidth={3} />
-      <line x1={CX - HALF} y1={CY + HALF + 4} x2={CX + HALF} y2={CY + HALF + 4} stroke="white" strokeWidth={3} />
+      <line x1={CX - HALF - 3} y1={CY - HALF} x2={CX - HALF - 3} y2={CY + HALF} stroke="white" strokeWidth={4} />
+      <line x1={CX + HALF + 3} y1={CY - HALF} x2={CX + HALF + 3} y2={CY + HALF} stroke="white" strokeWidth={4} />
+      <line x1={CX - HALF} y1={CY - HALF - 3} x2={CX + HALF} y2={CY - HALF - 3} stroke="white" strokeWidth={4} />
+      <line x1={CX - HALF} y1={CY + HALF + 3} x2={CX + HALF} y2={CY + HALF + 3} stroke="white" strokeWidth={4} />
 
       {/* Road labels */}
-      <text x={30} y={CY - HALF - 8} fontSize={12} fill="#94a3b8" fontWeight="bold">Voie 1 →</text>
-      <text x={CX + HALF + 10} y={CY - HALF - 8} fontSize={12} fill="#94a3b8" fontWeight="bold">→</text>
-      <text x={CX + HALF + 8} y={60} fontSize={12} fill="#94a3b8" fontWeight="bold">↓ Voie 2</text>
+      <text x={22} y={CY - HALF - 10} fontSize={11} fill="var(--road-label-fill)" fontWeight="900">Voie 1 →</text>
+      <text x={CX + HALF + 8} y={50} fontSize={11} fill="var(--road-label-fill)" fontWeight="900">↓ Voie 2</text>
 
       {/* Traffic lights */}
       {/* Voie 1 – left entry */}
@@ -204,18 +227,19 @@ export default function IntersectionView({ cars, feux }: Props) {
         return <CarSVG key={car.id} car={car} index={stackIndex} />;
       })}
 
-      {/* Legend for special positions */}
-      <g transform={`translate(10,${H - 80})`}>
-        <rect width={170} height={72} rx={6} fill="#1e293b" opacity={0.85} />
-        <text x={8} y={16} fontSize={9} fill="#94a3b8" fontWeight="bold">LÉGENDE — position voiture</text>
+      {/* Legend */}
+      <g transform={`translate(10,${H - 72})`}>
+        <rect width={170} height={62} rx={0} className="cs-svg-legend-bg" />
+        <rect width={170} height={62} rx={0} fill="none" stroke="var(--road-border)" strokeWidth={2} />
+        <text x={8} y={14} fontSize={8} fill="var(--legend-title)" fontWeight="900" textTransform="uppercase">LÉGENDE — position voiture</text>
         {[
-          { color: '#6b7280', label: 'En approche' },
-          { color: '#fbbf24', label: 'Dans la file / bloquée' },
-          { color: '#22d3ee', label: 'Attente signal' },
+          { color: 'var(--dot-done)', label: 'En approche' },
+          { color: '#ffaa00', label: 'Dans la file / bloquée' },
+          { color: '#00ccee', label: 'Attente signal' },
         ].map((item, idx) => (
-          <g key={idx} transform={`translate(8,${28 + idx * 16})`}>
-            <rect width={10} height={10} rx={2} fill={item.color} />
-            <text x={15} y={9} fontSize={9} fill="#e2e8f0">{item.label}</text>
+          <g key={idx} transform={`translate(8,${24 + idx * 14})`}>
+            <rect width={9} height={9} rx={0} fill={item.color} stroke="var(--road-border)" strokeWidth={1} />
+            <text x={14} y={8} fontSize={8} fill="var(--legend-text)" fontWeight="700">{item.label}</text>
           </g>
         ))}
       </g>
