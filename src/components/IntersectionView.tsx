@@ -231,7 +231,7 @@ export default function IntersectionView({ cars, feux }: Props) {
       <g transform={`translate(10,${H - 72})`}>
         <rect width={170} height={62} rx={0} className="cs-svg-legend-bg" />
         <rect width={170} height={62} rx={0} fill="none" stroke="var(--road-border)" strokeWidth={2} />
-        <text x={8} y={14} fontSize={8} fill="var(--legend-title)" fontWeight="900" textTransform="uppercase">LÉGENDE — position voiture</text>
+        <text x={8} y={14} fontSize={8} fill="var(--legend-title)" fontWeight="900" >LÉGENDE — position voiture</text>
         {[
           { color: 'var(--dot-done)', label: 'En approche' },
           { color: '#ffaa00', label: 'Dans la file / bloquée' },
