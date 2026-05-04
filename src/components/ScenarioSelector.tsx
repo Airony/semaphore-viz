@@ -4,30 +4,27 @@ interface Props {
   scenarios: Scenario[];
   current: string;
   onSelect: (id: string) => void;
-  theme?: 'dark' | 'light';
 }
 
-const SCENARIO_COLORS: Record<string, { base: string; baseLight: string; active: string }> = {
-  sc1:  { base: '#111d3a', baseLight: '#dde8ff', active: '#1d4ed8' },
-  sc2:  { base: '#261a06', baseLight: '#fff0d0', active: '#b45309' },
-  sc3:  { base: '#16162e', baseLight: '#e8e8f0', active: '#475569' },
-  sc4:  { base: '#180e36', baseLight: '#ede8ff', active: '#6d28d9' },
-  sc4p: { base: '#200e36', baseLight: '#f5e8ff', active: '#9333ea' },
-  sc5:  { base: '#091a10', baseLight: '#ddf5e8', active: '#15803d' },
-  sc6:  { base: '#1c070d', baseLight: '#ffe8ea', active: '#b91c1c' },
+const SCENARIO_COLORS: Record<string, { base: string; active: string }> = {
+  sc1:  { base: '#dceaff', active: '#2f6fb6' },
+  sc2:  { base: '#fff0db', active: '#9b5f16' },
+  sc3:  { base: '#eceaf2', active: '#5f6b7a' },
+  sc4:  { base: '#eee8ff', active: '#6b4eb2' },
+  sc4p: { base: '#f8e8ff', active: '#8b4cb3' },
+  sc5:  { base: '#e3f4e9', active: '#317a4f' },
+  sc6:  { base: '#ffe6e4', active: '#ad4f4f' },
 };
 
-export default function ScenarioSelector({ scenarios, current, onSelect, theme }: Props) {
-  const isLight = theme === 'light';
-
+export default function ScenarioSelector({ scenarios, current, onSelect }: Props) {
   return (
     <div>
       <p className="cs-label mb-2.5">Choisir un scénario</p>
       <div className="flex flex-wrap gap-2">
         {scenarios.map((sc) => {
           const isActive = sc.id === current;
-          const { base, baseLight, active } = SCENARIO_COLORS[sc.id] ?? { base: '#16162e', baseLight: '#e8e8f0', active: '#475569' };
-          const bg = isActive ? active : (isLight ? baseLight : base);
+          const { base, active } = SCENARIO_COLORS[sc.id] ?? { base: '#eceaf2', active: '#5f6b7a' };
+          const bg = isActive ? active : base;
           const color = isActive ? '#ffffff' : 'var(--sc-label)';
           return (
             <button

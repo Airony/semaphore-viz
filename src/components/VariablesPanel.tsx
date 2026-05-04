@@ -48,9 +48,9 @@ export default function VariablesPanel({ vars, changed, compact }: Props) {
         </div>
         <p className="text-[10px] font-bold mt-1 cs-text-faint">
           Voie {vars.feux} au&nbsp;
-          <span className="text-green-500 font-black">VERT</span>
+          <span className="cs-accent-green font-black">VERT</span>
           {' '}&nbsp;/&nbsp;Voie {vars.feux === 1 ? 2 : 1} au&nbsp;
-          <span className="text-red-500 font-black">ROUGE</span>
+          <span className="cs-accent-red font-black">ROUGE</span>
         </p>
       </div>
 

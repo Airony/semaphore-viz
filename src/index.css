@@ -1,231 +1,138 @@
 @import "tailwindcss";
 
 /* ══════════════════════════════════════════════════════════════
-   CSS CUSTOM PROPERTIES — Dark (default) & Light themes
+   CSS CUSTOM PROPERTIES — Light theme only
    ══════════════════════════════════════════════════════════════ */
 
 :root {
+  color-scheme: light;
+
   /* Page */
-  --bg-page:          #0b0b18;
-  --bg-card:          #141428;
-  --bg-card-header:   #0d0d20;
-  --bg-inset:         #0a0a14;
-  --bg-inset2:        #1c1c38;
+  --bg-page:          #f4efe6;
+  --bg-card:          #fffdf8;
+  --bg-card-header:   #ece4d8;
+  --bg-inset:         #f7f1e7;
+  --bg-inset2:        #e6dbcb;
 
   /* Borders & shadows */
-  --border-color:     #000000;
-  --shadow-offset:    4px 4px 0 #000;
-  --shadow-btn:       3px 3px 0 #000;
-  --shadow-btn-hover: 1px 1px 0 #000;
+  --border-color:     #211d18;
+  --shadow-offset:    4px 4px 0 #211d18;
+  --shadow-btn:       3px 3px 0 #211d18;
+  --shadow-btn-hover: 1px 1px 0 #211d18;
 
   /* Text */
-  --text-primary:   #ffffff;
-  --text-secondary: #8888bb;
-  --text-muted:     #44446a;
-  --text-faint:     #2a2a4a;
+  --text-primary:   #1d1915;
+  --text-secondary: #342e28;
+  --text-muted:     #5a5248;
+  --text-faint:     #7a7063;
 
   /* Label (cs-label) */
-  --label-color:    #3a3a5c;
+  --label-color:    #4e473f;
 
   /* Roads / SVG */
-  --road-fill:        #1c1c2e;
-  --road-border:      #000000;
-  --intersection-fill:#22223a;
-  --grass-fill:       #0a1808;
-  --dash-fill:        #ffcc00;
-  --legend-bg:        #0d0d20;
-  --legend-text:      #6666aa;
-  --legend-title:     #2a2a4a;
-  --road-label-fill:  #2a2a4a;
+  --road-fill:        #cfc4b4;
+  --road-border:      #211d18;
+  --intersection-fill:#baad99;
+  --grass-fill:       #d4dfc2;
+  --dash-fill:        #d18b1d;
+  --legend-bg:        #fffdf8;
+  --legend-text:      #413a34;
+  --legend-title:     #73675a;
+  --road-label-fill:  #675d52;
 
   /* Traffic light housings */
-  --tl-housing:  #111122;
-  --tl-red-off:  #1a0505;
-  --tl-grn-off:  #051a0a;
+  --tl-housing:  #3b342e;
+  --tl-red-off:  #9f7676;
+  --tl-grn-off:  #799674;
 
   /* Semaphore cell states */
-  --sem-changed-bg:  #2a1800;
-  --sem-blocked-bg:  #2a0808;
-  --sem-ok-bg:       #082a12;
-  --sem-bar-bg:      #0a0a1e;
-  --sem-init-color:  #2a2a4a;
+  --sem-changed-bg:  #fff2d4;
+  --sem-blocked-bg:  #fde8e5;
+  --sem-ok-bg:       #e7f3ea;
+  --sem-bar-bg:      #e7ddcf;
+  --sem-init-color:  #5b5147;
 
   /* Var panel */
-  --var-feux-bg:       #0d0d20;
-  --var-changed-bg:    #2a1800;
-  --var-enattente-on:  #2a1000;
-  --var-enattente-off: #1c1c38;
-  --var-color-on:      #fb923c;
-  --var-color-off:     #44446a;
+  --var-feux-bg:       #f8f2ea;
+  --var-changed-bg:    #fff2d4;
+  --var-enattente-on:  #ffe9d2;
+  --var-enattente-off: #e9e0d3;
+  --var-color-on:      #9b5f16;
+  --var-color-off:     #423a33;
 
   /* Log */
-  --log-time-color: #2a2a4a;
-  --log-msg-color:  #8888bb;
+  --log-time-color: #776d61;
+  --log-msg-color:  #39332d;
 
   /* Car chips */
-  --chip-bg:    #0d0d20;
-  --chip-label: #44446a;
-  --chip-pos-bg:#1c1c38;
-  --chip-pos:   #8888bb;
+  --chip-bg:    #f8f2ea;
+  --chip-label: #6d6357;
+  --chip-pos-bg:#e8dfd2;
+  --chip-pos:   #494139;
 
   /* Step description */
-  --desc-bg:   #141428;
-  --desc-text: #ccccee;
-  --proc-bg:   #220e44;
-  --proc-text: #d8b4fe;
+  --desc-bg:   #fffaf1;
+  --desc-text: #28231e;
+  --proc-bg:   #efe6ff;
+  --proc-text: #5f42aa;
 
   /* Code view */
-  --code-bg:         #0a0a14;
-  --code-header-act: #003344;
-  --code-header:     #0d0d20;
-  --code-proc-strip: #0a0a1e;
-  --code-line-num:   #2a2a4a;
-  --code-text:       #8888aa;
-  --code-sep:        #000000;
+  --code-bg:         #f8f3eb;
+  --code-header-act: #d9eef2;
+  --code-header:     #ede4d8;
+  --code-proc-strip: #f2ece4;
+  --code-line-num:   #796f63;
+  --code-text:       #50473e;
+  --code-sep:        #211d18;
 
   /* Mode buttons */
-  --mode-inactive-bg:   #1c1c38;
-  --mode-inactive-text: #6666aa;
+  --mode-inactive-bg:   #e5dacb;
+  --mode-inactive-text: #544c43;
 
   /* Step controls */
-  --dot-done:    #334466;
-  --dot-future:  #1c1c38;
-  --ctrl-bg:     #1c1c38;
-  --ctrl-text:   #aaaacc;
+  --dot-done:    #a2b1ca;
+  --dot-current: #0f7687;
+  --dot-future:  #ddd2c3;
+  --ctrl-bg:     #e9dfd2;
+  --ctrl-text:   #4d453c;
 
   /* Speed buttons */
-  --speed-inactive-bg:   #1c1c38;
-  --speed-inactive-text: #6666aa;
+  --speed-inactive-bg:   #e9dfd2;
+  --speed-inactive-text: #655c52;
 
   /* Countdown bar */
-  --countdown-track: #0a0a1e;
+  --countdown-track: #e6dccf;
 
   /* Sliders */
-  --slider-minmax: #2a2a4a;
+  --slider-minmax: #746a5e;
 
   /* Scenario cards */
-  --sc-label: #6666aa;
+  --sc-label: #494239;
 
   /* Accent */
-  --accent-code: #06b6d4;
-}
-
-[data-theme="light"] {
-
-  --label-color:    #141418;
-  /* Page */
-  --bg-page:          #f0eeea;
-  --bg-card:          #fdfcfa;
-  --bg-card-header:   #e8e4de;
-  --bg-inset:         #f5f3ef;
-  --bg-inset2:        #dcd8d0;
-
-  /* Borders & shadows */
-  --border-color:     #1a1a1a;
-  --shadow-offset:    4px 4px 0 #1a1a1a;
-  --shadow-btn:       3px 3px 0 #1a1a1a;
-  --shadow-btn-hover: 1px 1px 0 #1a1a1a;
-
-  /* Text */
-  --text-primary:   #0f0f1a;
-  --text-secondary: #16161d;
-  --text-muted:     #2a2a3a;
-  --text-faint:     #36373d;
-
-  /* Label */
-  --label-color:    #050506;
-
-  /* Roads / SVG */
-  --road-fill:        #c8c4bc;
-  --road-border:      #1a1a1a;
-  --intersection-fill:#b8b4ac;
-  --grass-fill:       #c8d8b8;
-  --dash-fill:        #ff9900;
-  --legend-bg:        #fdfcfa;
-  --legend-text:      #24242f;
-  --legend-title:     #4d4e5e;
-  --road-label-fill:  #888aaa;
-
-  /* Traffic light housings */
-  --tl-housing:  #2a2a3a;
-  --tl-red-off:  #8a4040;
-  --tl-grn-off:  #406040;
-
-  /* Semaphore cell states */
-  --sem-changed-bg:  #fff3cc;
-  --sem-blocked-bg:  #ffe8e8;
-  --sem-ok-bg:       #e8f8ee;
-  --sem-bar-bg:      #e0ddd8;
-  --sem-init-color:  #27272b;
-
-  /* Var panel */
-  --var-feux-bg:       #f5f3ef;
-  --var-changed-bg:    #fff3cc;
-  --var-enattente-on:  #fff0e0;
-  --var-enattente-off: #e8e4de;
-  --var-color-on:      #c05000;
-  --var-color-off:     #2d2e39;
-
-  /* Log */
-  --log-time-color: #aaa8b0;
-  --log-msg-color:  #444466;
-
-  /* Car chips */
-  --chip-bg:    #f5f3ef;
-  --chip-label: #888aaa;
-  --chip-pos-bg:#e0ddd8;
-  --chip-pos:   #444466;
-
-  /* Step description */
-  --desc-bg:   #fdfcfa;
-  --desc-text: #1a1a2e;
-  --proc-bg:   #f0e8ff;
-  --proc-text: #5522aa;
-
-  /* Code view */
-  --code-bg:         #f5f3ef;
-  --code-header-act: #d0eef8;
-  --code-header:     #e8e4de;
-  --code-proc-strip: #eeeae4;
-  --code-line-num:   #aaa8b0;
-  --code-text:       #4a4a6a;
-  --code-sep:        #1a1a1a;
-
-  /* Mode buttons */
-  --mode-inactive-bg:   #e0ddd8;
-  --mode-inactive-text: #424354;
-
-  /* Step controls */
-  --dot-done:   #aaaacc;
-  --dot-future: #d8d4cc;
-  --ctrl-bg:    #e0ddd8;
-  --ctrl-text:  #333355;
-
-  /* Speed buttons */
-  --speed-inactive-bg:   #e0ddd8;
-  --speed-inactive-text: #888aaa;
-
-  /* Countdown bar */
-  --countdown-track: #e0ddd8;
-
-  /* Sliders */
-  --slider-minmax: #aaa8b0;
-
-  /* Scenario cards */
-  --sc-label: #444466;
-
-  /* Accent */
-  --accent-code: #0e7490;
+  --accent-blue:   #2f6fb6;
+  --accent-amber:  #9b5f16;
+  --accent-cyan:   #0f7687;
+  --accent-green:  #317a4f;
+  --accent-red:    #ad4f4f;
+  --accent-violet: #6b4eb2;
+  --accent-code:   #0f7687;
 }
 
 /* ══════════════════════════════════════════════════════════════
    Global base
    ══════════════════════════════════════════════════════════════ */
 
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
 body {
   background: var(--bg-page);
   color: var(--text-primary);
-  transition: background 120ms ease, color 120ms ease;
+  margin: 0;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -274,12 +181,7 @@ body {
   color: var(--label-color);
 }
 
-/* ── Theme-aware utility overrides ─────────────────────────────
-
-   Components use inline styles with hardcoded colors.
-   These CSS classes let us override them by theme.
-   We attach them alongside the existing ones.
-*/
+/* ── App utility classes ─────────────────────────────────────── */
 
 /* Page wrapper */
 .cs-page { background: var(--bg-page); }
@@ -343,6 +245,7 @@ body {
 /* Step controls */
 .cs-ctrl-btn { background: var(--ctrl-bg); color: var(--ctrl-text); }
 .cs-dot-done   { background: var(--dot-done); }
+.cs-dot-current{ background: var(--dot-current); }
 .cs-dot-future { background: var(--dot-future); }
 
 /* Mode toggle */
@@ -360,35 +263,33 @@ body {
 /* Simulation header */
 .cs-sim-header-stat { color: var(--text-muted); }
 
+/* Accent text */
+.cs-accent-blue  { color: var(--accent-blue); }
+.cs-accent-amber { color: var(--accent-amber); }
+.cs-accent-cyan  { color: var(--accent-cyan); }
+.cs-accent-green { color: var(--accent-green); }
+.cs-accent-red   { color: var(--accent-red); }
+.cs-accent-violet{ color: var(--accent-violet); }
+
+/* Accent buttons */
+.cs-btn-blue   { background: var(--accent-blue); color: #fff; }
+.cs-btn-amber  { background: var(--accent-amber); color: #fff; }
+.cs-btn-cyan   { background: var(--accent-cyan); color: #fff; }
+.cs-btn-green  { background: var(--accent-green); color: #fff; }
+.cs-btn-red    { background: var(--accent-red); color: #fff; }
+.cs-btn-violet { background: var(--accent-violet); color: #fff; }
+
+/* Step badge */
+.cs-step-badge {
+  background: var(--accent-cyan);
+  color: #fff;
+  border: 2px solid var(--border-color);
+  box-shadow: 2px 2px 0 var(--border-color);
+}
+
 /* SVG road surfaces — applied to SVG elements via CSS fill */
 .cs-svg-road        { fill: var(--road-fill); }
 .cs-svg-intersection{ fill: var(--intersection-fill); }
 .cs-svg-grass       { fill: var(--grass-fill); }
 .cs-svg-dash        { fill: var(--dash-fill); }
 .cs-svg-legend-bg   { fill: var(--legend-bg); }
-
-/* Theme toggle button */
-.cs-theme-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 10px;
-  font-size: 11px;
-  font-weight: 900;
-  background: var(--bg-inset2);
-  color: var(--text-secondary);
-  border: 2px solid var(--border-color);
-  box-shadow: var(--shadow-btn);
-  border-radius: 3px;
-  cursor: pointer;
-  transition: box-shadow 60ms ease, transform 60ms ease;
-  user-select: none;
-}
-.cs-theme-btn:hover {
-  box-shadow: var(--shadow-btn-hover);
-  transform: translate(2px, 2px);
-}
-.cs-theme-btn:active {
-  box-shadow: none;
-  transform: translate(3px, 3px);
-}

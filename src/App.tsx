@@ -10,23 +10,11 @@ import ScenarioSelector from './components/ScenarioSelector';
 import DynamicView from './components/DynamicView';
 
 type AppMode = 'scenarios' | 'simulation';
-type Theme = 'dark' | 'light';
 
 export default function App() {
   const [mode, setMode] = useState<AppMode>('scenarios');
-  const [theme, setTheme] = useState<Theme>('dark');
   const [scenarioId, setScenarioId] = useState(scenarios[0].id);
   const [stepIndex, setStepIndex] = useState(0);
-
-  // Apply theme to <html>
-  useEffect(() => {
-    const html = document.documentElement;
-    if (theme === 'light') {
-      html.setAttribute('data-theme', 'light');
-    } else {
-      html.removeAttribute('data-theme');
-    }
-  }, [theme]);
 
   const scenario = scenarios.find(s => s.id === scenarioId)!;
   const step = scenario.steps[stepIndex];
@@ -73,20 +61,10 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Theme toggle */}
-            <button
-              onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
-              className="cs-theme-btn"
-              title="Basculer le thème"
-            >
-              {theme === 'dark' ? '☀ Clair' : '☾ Sombre'}
-            </button>
-
-            {/* Mode toggle */}
             <button
               onClick={() => setMode('scenarios')}
               className={`cs-btn px-4 py-1.5 text-xs font-black ${
-                mode === 'scenarios' ? 'bg-blue-600 text-white' : 'cs-mode-inactive'
+                mode === 'scenarios' ? 'cs-btn-blue' : 'cs-mode-inactive'
               }`}
             >
               Scénarios
@@ -94,7 +72,7 @@ export default function App() {
             <button
               onClick={() => setMode('simulation')}
               className={`cs-btn px-4 py-1.5 text-xs font-black ${
-                mode === 'simulation' ? 'bg-cyan-600 text-white' : 'cs-mode-inactive'
+                mode === 'simulation' ? 'cs-btn-cyan' : 'cs-mode-inactive'
               }`}
             >
               Simulation
@@ -111,7 +89,6 @@ export default function App() {
                 scenarios={scenarios}
                 current={scenarioId}
                 onSelect={handleSelectScenario}
-                theme={theme}
               />
             </div>
 
@@ -123,7 +100,7 @@ export default function App() {
                       {scenario.title}: {scenario.subtitle}
                     </span>
                     <span className="text-[10px] cs-text-muted font-bold">
-                      feux = <span className={step.vars.feux === 1 ? 'text-blue-500 font-black' : 'text-amber-500 font-black'}>{step.vars.feux}</span>
+                      feux = <span className={step.vars.feux === 1 ? 'cs-accent-blue font-black' : 'cs-accent-amber font-black'}>{step.vars.feux}</span>
                     </span>
                   </div>
                   <IntersectionView cars={step.cars} feux={step.vars.feux} />
@@ -152,7 +129,12 @@ export default function App() {
               </div>
 
               <div className="cs-card p-4 overflow-auto">
-                <CodeView highlights={step.codeHighlights} activeProcesses={step.activeProcesses} />
+                <CodeView
+                  highlights={step.codeHighlights}
+                  activeProcesses={step.activeProcesses}
+                  cars={step.cars}
+                  semaphoreQueues={step.semaphoreQueues}
+                />
               </div>
             </div>
           </>
@@ -169,4 +151,3 @@ export default function App() {
     </div>
   );
 }
-

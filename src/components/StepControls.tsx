@@ -37,7 +37,7 @@ export default function StepControls({ step, total, onPrev, onNext, onReset }: P
             className={`
               transition-all duration-200 border border-black rounded-none
               ${i === step
-                ? 'w-3 h-3 bg-cyan-400 shadow-[1px_1px_0_#000]'
+                ? 'w-3 h-3 cs-dot-current shadow-[1px_1px_0_#000]'
                 : i < step
                   ? 'w-2 h-2 cs-dot-done'
                   : 'w-2 h-2 cs-dot-future'}
@@ -49,7 +49,7 @@ export default function StepControls({ step, total, onPrev, onNext, onReset }: P
       <button
         onClick={onNext}
         disabled={isLast}
-        className="cs-btn bg-cyan-600 text-white px-4 py-2 text-xs font-black"
+        className="cs-btn cs-btn-cyan px-4 py-2 text-xs font-black"
         title="Suivant (→)"
       >
         Suivant →

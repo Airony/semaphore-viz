@@ -8,7 +8,7 @@ export default function StepDescription({ description, activeProcesses, stepInde
   return (
     <div className="cs-card cs-desc-bg p-4">
       <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 w-7 h-7 bg-cyan-500 flex items-center justify-center text-black text-xs font-black border-2 border-black shadow-[2px_2px_0_#000] mt-0.5">
+        <div className="flex-shrink-0 w-7 h-7 cs-step-badge flex items-center justify-center text-xs font-black mt-0.5">
           {stepIndex + 1}
         </div>
         <div className="flex-1 min-w-0">

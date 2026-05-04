@@ -1,4 +1,4 @@
-import type { CodeHighlight } from '../types';
+import type { CarState, CodeHighlight, SemaphoreKey } from '../types';
 import { CHANGEMENT_CODE, TRAVERSER_CODE } from '../data/code';
 
 const PROCESS_COLORS: Record<string, string> = {
@@ -18,21 +18,59 @@ interface CodeBlockProps {
   lines: string[];
   highlights: CodeHighlight[];
   activeProcesses: string[];
+  cars: CarState[];
+  semaphoreQueues?: Partial<Record<SemaphoreKey, string[]>>;
 }
 
-function CodeBlock({ title, procedure, lines, highlights, activeProcesses }: CodeBlockProps) {
-  // Map line → [{processId, color}] for per-vehicle highlighting
-  const lineProcesses = new Map<number, { processId: string; color: string }[]>();
+interface ProcessMarker {
+  processId: string;
+  color: string;
+}
+
+const BLOCKED_LINE_BY_SEMAPHORE: Partial<Record<SemaphoreKey, number>> = {
+  queue1: 2,
+  queue2: 2,
+  mutexFeux: 3,
+  signalAttente: 11,
+};
+
+function addMarker(map: Map<number, ProcessMarker[]>, line: number, marker: ProcessMarker) {
+  const existing = map.get(line) ?? [];
+  if (!existing.some(entry => entry.processId === marker.processId)) {
+    existing.push(marker);
+    map.set(line, existing);
+  }
+}
+
+function CodeBlock({ title, procedure, lines, highlights, activeProcesses, cars, semaphoreQueues }: CodeBlockProps) {
+  const blockedByLine = new Map<number, ProcessMarker[]>();
+
+  if (procedure === 'Traverser' && semaphoreQueues) {
+    for (const [key, pids] of Object.entries(semaphoreQueues) as [SemaphoreKey, string[]][]) {
+      const line = BLOCKED_LINE_BY_SEMAPHORE[key];
+      if (!line) continue;
+      for (const pid of pids) {
+        addMarker(blockedByLine, line, {
+          processId: pid,
+          color: PROCESS_COLORS[pid] ?? '#fbbf24',
+        });
+      }
+    }
+  }
+
+  // Map line → executing and blocked markers separately
+  const executingByLine = new Map<number, ProcessMarker[]>();
   for (const h of highlights) {
     if (h.procedure === procedure) {
       const pid = h.processId ?? '?';
-      const color = PROCESS_COLORS[pid] ?? '#fbbf24';
+      const marker = { processId: pid, color: PROCESS_COLORS[pid] ?? '#fbbf24' };
       for (const ln of h.lines) {
-        const existing = lineProcesses.get(ln) || [];
-        if (!existing.some(e => e.processId === pid)) {
-          existing.push({ processId: pid, color });
+        const blockedOnLine = (blockedByLine.get(ln) ?? []).some(entry => entry.processId === pid);
+        if (blockedOnLine) {
+          addMarker(blockedByLine, ln, marker);
+        } else {
+          addMarker(executingByLine, ln, marker);
         }
-        lineProcesses.set(ln, existing);
       }
     }
   }
@@ -42,6 +80,12 @@ function CodeBlock({ title, procedure, lines, highlights, activeProcesses }: Cod
   const filteredProcesses = activeProcesses.filter(p =>
     procedure === 'Changement' ? p.includes('Changement') : p.includes('Traverser')
   );
+  const visibleCarProcesses = procedure === 'Traverser'
+    ? cars
+        .filter(car => car.position !== 'off')
+        .map(car => `${car.id} — Traverser(${car.voie})`)
+    : [];
+  const displayedProcesses = procedure === 'Traverser' ? visibleCarProcesses : filteredProcesses;
 
   return (
     <div
@@ -68,10 +112,10 @@ function CodeBlock({ title, procedure, lines, highlights, activeProcesses }: Cod
         )}
       </div>
 
-      {/* active processes */}
-      {isActive && filteredProcesses.length > 0 && (
+      {/* visible processes */}
+      {displayedProcesses.length > 0 && (
         <div className="cs-code-proc-strip px-3 py-1.5 flex flex-wrap gap-1">
-          {filteredProcesses.map(p => {
+          {displayedProcesses.map(p => {
             const pid = p.split(' — ')[0].trim();
             const color = PROCESS_COLORS[pid] ?? '#a78bfa';
             return (
@@ -93,9 +137,10 @@ function CodeBlock({ title, procedure, lines, highlights, activeProcesses }: Cod
           <tbody>
             {lines.map((line, idx) => {
               const lineNum = idx + 1;
-              const processes = lineProcesses.get(lineNum) || [];
-              const isHighlighted = processes.length > 0;
-              const bgColor = isHighlighted ? processes[0].color : undefined;
+              const executing = executingByLine.get(lineNum) ?? [];
+              const blocked = blockedByLine.get(lineNum) ?? [];
+              const isHighlighted = executing.length > 0;
+              const bgColor = isHighlighted ? executing[0].color : undefined;
               return (
                 <tr
                   key={lineNum}
@@ -107,7 +152,7 @@ function CodeBlock({ title, procedure, lines, highlights, activeProcesses }: Cod
                   <td
                     className={`pl-3 pr-4 py-0.5 whitespace-pre ${isHighlighted ? 'cs-code-text-hi' : 'cs-code-text'}`}
                   >
-                    {processes.map((p, i) => (
+                    {executing.map((p, i) => (
                       <span
                         key={i}
                         className="inline-block w-2 h-2 mr-1 mb-0.5 align-middle border border-black"
@@ -116,6 +161,20 @@ function CodeBlock({ title, procedure, lines, highlights, activeProcesses }: Cod
                       />
                     ))}
                     {line || ' '}
+                  </td>
+                  <td className="w-16 pr-3 py-0.5 text-right align-middle">
+                    {blocked.length > 0 && (
+                      <span className="inline-flex items-center justify-end gap-1 min-h-4">
+                        {blocked.map((p, i) => (
+                          <span
+                            key={i}
+                            className="inline-block w-2 h-2 border border-black"
+                            style={{ background: p.color }}
+                            title={`${p.processId} bloqué ici`}
+                          />
+                        ))}
+                      </span>
+                    )}
                   </td>
                 </tr>
               );
@@ -130,9 +189,11 @@ function CodeBlock({ title, procedure, lines, highlights, activeProcesses }: Cod
 interface Props {
   highlights: CodeHighlight[];
   activeProcesses: string[];
+  cars: CarState[];
+  semaphoreQueues?: Partial<Record<SemaphoreKey, string[]>>;
 }
 
-export default function CodeView({ highlights, activeProcesses }: Props) {
+export default function CodeView({ highlights, activeProcesses, cars, semaphoreQueues }: Props) {
   return (
     <div className="space-y-3 h-full">
       <p className="cs-label mb-3">Code — procédures</p>
@@ -142,6 +203,8 @@ export default function CodeView({ highlights, activeProcesses }: Props) {
         lines={CHANGEMENT_CODE}
         highlights={highlights}
         activeProcesses={activeProcesses}
+        cars={cars}
+        semaphoreQueues={semaphoreQueues}
       />
       <CodeBlock
         title="Traverser(voie)"
@@ -149,6 +212,8 @@ export default function CodeView({ highlights, activeProcesses }: Props) {
         lines={TRAVERSER_CODE}
         highlights={highlights}
         activeProcesses={activeProcesses}
+        cars={cars}
+        semaphoreQueues={semaphoreQueues}
       />
     </div>
   );

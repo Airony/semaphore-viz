@@ -41,13 +41,13 @@ export default function SimulationControls({
         <div className="flex gap-1.5">
           <button
             onClick={() => onSpawnCar(1)}
-            className="cs-btn flex-1 bg-blue-600 text-white px-2 py-2 text-xs font-black"
+            className="cs-btn cs-btn-blue flex-1 px-2 py-2 text-xs font-black"
           >
             → Voie 1
           </button>
           <button
             onClick={() => onSpawnCar(2)}
-            className="cs-btn flex-1 bg-amber-600 text-white px-2 py-2 text-xs font-black"
+            className="cs-btn cs-btn-amber flex-1 px-2 py-2 text-xs font-black"
           >
             ↓ Voie 2
           </button>
@@ -60,7 +60,7 @@ export default function SimulationControls({
         <button
           onClick={onChangement}
           disabled={!running || paused}
-          className="cs-btn w-full bg-cyan-700 text-white px-3 py-2 text-xs font-black"
+          className="cs-btn cs-btn-cyan w-full px-3 py-2 text-xs font-black"
         >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
             <path strokeLinecap="round" strokeLinejoin="round"
@@ -94,28 +94,28 @@ export default function SimulationControls({
           {!running ? (
             <button
               onClick={() => onSpawnCar(1)}
-              className="cs-btn flex-1 bg-emerald-700 text-white px-2 py-1.5 text-xs font-black"
+              className="cs-btn cs-btn-green flex-1 px-2 py-1.5 text-xs font-black"
             >
               ▶ Démarrer
             </button>
           ) : paused ? (
             <button
               onClick={onResume}
-              className="cs-btn flex-1 bg-emerald-700 text-white px-2 py-1.5 text-xs font-black"
+              className="cs-btn cs-btn-green flex-1 px-2 py-1.5 text-xs font-black"
             >
               ▶ Reprendre
             </button>
           ) : (
             <button
               onClick={onPause}
-              className="cs-btn flex-1 bg-amber-700 text-white px-2 py-1.5 text-xs font-black"
+              className="cs-btn cs-btn-amber flex-1 px-2 py-1.5 text-xs font-black"
             >
               ⏸ Pause
             </button>
           )}
           <button
             onClick={onReset}
-            className="cs-btn bg-red-800 text-white px-3 py-1.5 text-xs font-black"
+            className="cs-btn cs-btn-red px-3 py-1.5 text-xs font-black"
           >
             ↺ Reset
           </button>
@@ -133,7 +133,7 @@ export default function SimulationControls({
               key={s}
               onClick={() => onSpeedChange(s)}
               className={`cs-btn flex-1 text-[10px] font-mono font-black py-1 ${
-                speed === s ? 'bg-violet-600 text-white' : 'cs-speed-inactive'
+                speed === s ? 'cs-btn-violet' : 'cs-speed-inactive'
               }`}
             >
               {s}×

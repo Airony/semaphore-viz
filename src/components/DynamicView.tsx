@@ -117,19 +117,19 @@ export default function DynamicView() {
 
         {/* CENTER: intersection + active cars */}
         <div className="flex-1 min-w-0 flex flex-col gap-3">
-          <div className="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden flex-1 flex flex-col min-h-0 cs-card">
+          <div className="overflow-hidden flex-1 flex flex-col min-h-0 cs-card">
             <div className="px-4 py-2 border-b-2 cs-header flex items-center justify-between flex-shrink-0">
               <span className="cs-label">
                 Simulation dynamique
               </span>
               <div className="flex items-center gap-3">
                 {snap.running && (
-                  <span className={`text-[10px] font-black ${snap.paused ? 'text-amber-500' : 'text-emerald-600'}`}>
+                  <span className={`text-[10px] font-black ${snap.paused ? 'cs-accent-amber' : 'cs-accent-green'}`}>
                     {snap.paused ? '⏸ En pause' : '● En cours'}
                   </span>
                 )}
                 <span className="text-[10px] font-black cs-text-muted">
-                  feux = <span className={snap.vars.feux === 1 ? 'text-blue-400 font-black' : 'text-amber-400 font-black'}>
+                  feux = <span className={snap.vars.feux === 1 ? 'cs-accent-blue font-black' : 'cs-accent-amber font-black'}>
                     {snap.vars.feux}
                   </span>
                 </span>
